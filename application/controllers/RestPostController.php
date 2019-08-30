@@ -82,7 +82,46 @@ class RestPostController extends CI_Controller {
 
 
     //user speceific controls
-     public function login_post() {
+public function login_post() {
+        // Get the post data
+        $uniqueId = $this->post('uniqueId');
+        
+        // Validate the post data
+        if(!empty($uniqueId)){
+            
+            // Check if any user exists with the given credentials
+            $con['returnType'] = 'single';
+            $con['conditions'] = array(
+                'uniqueId' => $uniqueId,
+                'isDeleted' => 0
+            );
+            $user = $this->user->getRows($con);
+            
+            if($user){
+
+                $this->response(array(
+                    'status' => "success",
+                    'message' => 'User login successful.'
+                ));
+
+            }else{
+                $this->response(array(
+                    'status' => "failed",
+                    'message' => 'Wrong email or password.'
+                ));
+            }
+        }else{
+              $this->response(array(
+                    'status' => "failed",
+                    'message' => 'Provide email and password.'
+                ));
+
+            //}else{
+        }
+    }
+
+
+     public function login_post_all() {
         // Get the post data
         $email = $this->post('email');
         $password = $this->post('password');
@@ -133,7 +172,7 @@ class RestPostController extends CI_Controller {
         }
     }
     
-    public function registration_post() {
+    public function registration_post_all() {
         // Get the post data
         $name = strip_tags($this->post('name'));
         $mobile = strip_tags($this->post('mobile'));
@@ -186,6 +225,47 @@ class RestPostController extends CI_Controller {
             // Set the response and exit
             //$this->response("Provide complete user info to add.", REST_Controller::HTTP_BAD_REQUEST);
             $this->response(array('status' => 'Provide complete user info to add', 'message' => 'failed'));
+        }
+    }
+
+    public function registration_post() {
+        // Get the post data
+        $uniqueId = strip_tags($this->post('uniqueId'));
+        $roleId = "4";
+        
+        // Validate the post data
+        if(!empty($uniqueId)){
+            
+            // Check if the given email already exists
+            $con['returnType'] = 'count';
+            $con['conditions'] = array(
+                'uniqueId' => $uniqueId,
+            );
+            $userCount = $this->user->getRows($con);
+            
+            if($userCount > 0){
+                // Set the response and exit
+                $this->response("The given Unique Id already exists. Please choose another", REST_Controller::HTTP_BAD_REQUEST);
+            }else{
+                // Insert user data
+                $userData = array(
+                    'uniqueId' => $uniqueId,
+                    'roleId'  => $roleId
+                    
+                );
+                $insert = $this->user->insert($userData);
+                
+                // Check if the user data is inserted
+                if($insert){
+
+                    $this->response(array('status' => 'success'));
+                }else{
+                    $this->response(array('status' => 'failed'));
+                }
+            }
+        }else{
+            // Set the response and exit
+            $this->response(array('status' => 'Oops please try again', 'message' => 'failed'));
         }
     }
     
