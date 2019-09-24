@@ -66,6 +66,18 @@ class RestPostController extends CI_Controller {
         }
     }
 
+//delete
+
+   function delete_contact_delete($contact_id) {
+
+        $result = $this->cm->delete_contact($contact_id);
+
+        if ($result === FALSE) {
+            $this->response(array('status' => 'failed'));
+        } else {
+            $this->response(array('status' => 'success'));
+        }
+    }
 
 
 

@@ -5,7 +5,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 /**
  * Description of ContactModel
  *
- * @author https://roytuts.com
+ * @author oscaros
  */
 class ContactModel extends CI_Model {
 
@@ -30,6 +30,11 @@ class ContactModel extends CI_Model {
             return $query->row();
         }
         return NULL;
+    }
+
+     function delete_contact($contact_id) {
+        $this->db->where('contact_id', $contact_id);
+        $this->db->delete($this->contact);
     }
 
 }
